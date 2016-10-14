@@ -40,5 +40,3 @@ function processSetup($mac,&$s20Table,$actionValue){
         error_log("process setup: unknow action: >".$actionValue."<\n");
     }
 }
-
-?>

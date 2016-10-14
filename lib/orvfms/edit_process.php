@@ -30,5 +30,4 @@ function editProcess($mac,&$s20Table){
 
 function delProcess($mac,$recCode,&$s20Table){
     delTimer($mac,$recCode,$s20Table);
-}        
-?>
+}

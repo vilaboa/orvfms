@@ -203,5 +203,3 @@ foreach($s20Table as $mac => $dev){
 
 
 echo "\n\nTest finished, check if everything seems OK\n";
-
-?>

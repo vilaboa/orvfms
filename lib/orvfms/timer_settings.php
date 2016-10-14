@@ -50,5 +50,3 @@ function timerSettings(&$s20Table,$mac,$actionValue){
     }
     return 0;
 }
-
-?>

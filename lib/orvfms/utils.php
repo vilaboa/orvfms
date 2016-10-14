@@ -231,5 +231,4 @@ function formatMac($mac){
         if($k < 5) $macr = $macr . ':';
     }
     return $macr;
-} 
-?>
+}

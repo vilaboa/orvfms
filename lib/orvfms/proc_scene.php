@@ -30,4 +30,3 @@ function saveScene(&$sceneList,$s20Table){
     writeSceneList($sceneList);
     $_SESSION['sceneList']=$sceneList;
 }
-?>

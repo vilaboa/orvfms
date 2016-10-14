@@ -64,7 +64,4 @@ define("NUMBER_OF_NEXT_ACTIONS_DISPLAYED_IN_MAIN_PAGE",0);
 define("LOCAL_FILE_NAME","orvfms.dat");
 define("SCENE_FILE_NAME","scene_orvfms.dat");
 define("NULL_MAC","000000000000");
-?>
-
-
 

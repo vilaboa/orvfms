@@ -1301,5 +1301,3 @@ function getIpFromMac($mac,&$s20Table){
     
     return $retIp;
 }
-?>
-

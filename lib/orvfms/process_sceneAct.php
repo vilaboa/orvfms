@@ -12,4 +12,3 @@ function processSceneAct($sceneList,&$s20Table,$sceneName){
         }
     }    
 }
-?>
