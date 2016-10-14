@@ -36,12 +36,20 @@
 // be done, but they would be system depedent and prone to
 // failures.
 //
-define("IP_BROADCAST","192.168.1.255");
+if (getenv("IP_BROADCAST")) {
+    define("IP_BROADCAST", getenv("IP_BROADCAST"));
+} else {
+    define("IP_BROADCAST","192.168.1.255");
+}
 
 // We strongly advise to use here a permanent working directory in the
 // line below, (for example, define("TMP_DIR","/mytmp"). See INSTALLATION 
 // for more information on this subject.
-define("TMP_DIR",""); 
+if (getenv("TMP_DIR")) {
+    define("TMP_DIR", getenv("TMP_DIR"));
+} else {
+    define("TMP_DIR",""); 
+}
 
 define("PORT",10000);
 define("TWENTIES","202020202020");
