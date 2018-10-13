@@ -77,7 +77,7 @@ S20 remote
 
 
 define("ORVFMS_PATH","../lib/orvfms/");
-define("IMG_PATH","../img/");
+define("IMG_PATH","img/");
 
 require_once(ORVFMS_PATH."utils.php");
 
