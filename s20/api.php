@@ -46,8 +46,8 @@ $device = $_REQUEST['device'];
 if(isset($action) && isset($device)){
 
     $mac = null;
-    foreach ($s20Table as $key=>$device) {
-        if (strcasecmp($device['name'],$device) == 0) {
+    foreach ($s20Table as $key=>$deviceData) {
+        if (strcasecmp($deviceData['name'],$device) == 0) {
             $mac = $key;
             $_POST['toMainPage'] = "switch".$mac;
             break;
