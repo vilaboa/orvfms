@@ -413,7 +413,7 @@ input[type=radio   ]:not(old){
   font-size : 1em;
   opacity   : 0;
 }
-<
+
 input[type=checkbox]:not(old) + label,
 input[type=radio   ]:not(old) + label{
   display      : inline-block;
@@ -613,7 +613,7 @@ select {
     background:    linear-gradient(#3d85c6, #073763);
 
 /*  UPDATE THE PATH below to match the image directory */
-    background-image:url("../img/menu_icon128px20pc.png");
+    background-image:url("img/menu_icon128px20pc.png");
     background-size:5vh 5vh;
     text-indent:-9999px;		
     border: none;
