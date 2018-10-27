@@ -13,13 +13,6 @@ else{
     $s20Table = readDataFile();
 }
 
-$ndummy = 0;
-if(isset($s20Table)){
-    foreach($s20Table as $mac => $data){
-        if(array_key_exists('off',$s20Table[$mac])) $ndummy++;
-    }
-}
-
 if(isset($s20Table) && (count($s20Table) > 0)){
     $s20Table = updateAllStatus($s20Table);  
     if(DEBUG)
@@ -61,26 +54,38 @@ if(isset($action) && isset($device)){
         exit(1);
     }
 
+    $subaction = null;
+    $msg = null;
     switch ($action) {
-        case 'switch': {
-            $st = $s20Table[$mac]['st'];
-            $newSt = actionAndCheck($mac,($st==0 ? 1 : 0),$s20Table);
-            $s20Table[$mac]['st']=$newSt;
-
-            echo json_encode(array(
-                'success' => true,
-                'status' => $s20Table[$mac]['st']
-            ));
-            exit(1);
-        }
-        default: {
-            echo json_encode(array(
-                'success' => false,
-                'msg' => "Action not found."
-            ));
-            exit(1);
-        }
+        case 'switch':
+            $subaction = !$s20Table[$mac]['st'];
+            $msg = "Switch.";
+            break;
+        case 'switchon':
+        case 'switch-on':
+            $subaction = 1;
+            $msg = "Switch on.";
+            break;
+        case 'switchoff':
+        case 'switch-off':
+            $subaction = 0;
+            $msg = "Switch off.";
+            break;
+        default:
+            $msg = "Action not found.";
     }
+
+    if (!is_null($subaction)) {
+        $s20Table[$mac]['st'] = actionAndCheck($mac, $subaction, $s20Table);
+        $success = ($s20Table[$mac]['st'] == $subaction)? true : false;
+    } else {
+        $success = false;
+    }
+    echo json_encode(array(
+        'success' => $success,
+        'status' => $s20Table[$mac]['st'],
+        'msg' => $msg
+    ));
 }
 
 ?>
