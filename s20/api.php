@@ -37,15 +37,7 @@ else{
 $action = $_REQUEST['action'];
 $device = $_REQUEST['device'];
 if(isset($action) && isset($device)){
-
-    $mac = null;
-    foreach ($s20Table as $key=>$deviceData) {
-        if (strcasecmp($deviceData['name'],$device) == 0) {
-            $mac = $key;
-            $_POST['toMainPage'] = "switch".$mac;
-            break;
-        }
-    }
+    $mac = getMacFromDeviceName($s20Table, $device);
     if (!$mac) {
         echo json_encode(array(
             'success' => false,
@@ -53,39 +45,64 @@ if(isset($action) && isset($device)){
         ));
         exit(1);
     }
-
-    $subaction = null;
     $msg = null;
+    $initialStatus = $s20Table[$mac]['st'];
+    $finalStatus = getFinalStatus($initialStatus, $action, $msg);
+
+    if (!is_null($finalStatus)) {
+        $s20Table[$mac]['st'] = actionAndCheck($mac, $finalStatus, $s20Table);
+        $success = ($s20Table[$mac]['st'] == $finalStatus)? true : false;
+        $success = true;
+        $a = ($initialStatus)?"on":"off";
+        $b = ($finalStatus)?"on":"off";
+        $msg = "Switch {$a}->{$b}";
+    } else {
+        $msg = "Action not found";
+        $success = false;
+    }
+
+    echo json_encode(array(
+        'success' => $success,
+        'device' => $device,
+        'status' => $s20Table[$mac]['st'],
+        'msg' => $msg
+    ));
+}
+
+function getMacFromDeviceName($s20Table, $deviceName) {
+    $mac = null;
+    foreach ($s20Table as $key=>$deviceData) {
+        if (strcasecmp($deviceData['name'],$deviceName) == 0) {
+            $mac = $key;
+            $_POST['toMainPage'] = "switch".$mac;
+            break;
+        }
+    }
+    return $mac;
+}
+
+function getFinalStatus($initialStatus, $action, &$msg) {
     switch ($action) {
         case 'switch':
-            $subaction = !$s20Table[$mac]['st'];
+            $finalStatus = !$initialStatus;
             $msg = "Switch.";
             break;
         case 'switchon':
         case 'switch-on':
-            $subaction = 1;
+            $finalStatus = 1;
             $msg = "Switch on.";
             break;
         case 'switchoff':
         case 'switch-off':
-            $subaction = 0;
+            $finalStatus = 0;
             $msg = "Switch off.";
             break;
         default:
+            $finalStatus = null;
             $msg = "Action not found.";
     }
 
-    if (!is_null($subaction)) {
-        $s20Table[$mac]['st'] = actionAndCheck($mac, $subaction, $s20Table);
-        $success = ($s20Table[$mac]['st'] == $subaction)? true : false;
-    } else {
-        $success = false;
-    }
-    echo json_encode(array(
-        'success' => $success,
-        'status' => $s20Table[$mac]['st'],
-        'msg' => $msg
-    ));
+    return $finalStatus;
 }
 
 ?>
