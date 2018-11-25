@@ -35,47 +35,47 @@ else{
 
 
 $action = $_REQUEST['action'];
-$device = $_REQUEST['device'];
-if(isset($action) && isset($device)){
-
-    $response = switchDevice($s20Table, $device, $action);
-
-    echo $response;
+$devices = is_array($_REQUEST['devices'])? $_REQUEST['devices'] : array();
+if (isset($_REQUEST['device'])) {
+    array_push($devices, $_REQUEST['device']);
 }
+
+$response = array();
+foreach ($devices as $device) {
+    if(isset($action) && isset($device)){
+        $response[] = switchDevice($s20Table, $device, $action);
+    }
+}
+echo json_encode($response);
 
 function switchDevice($s20Table, $device, $action) {
     $mac = getMacFromDeviceName($s20Table, $device);
-    if (!$mac) {
-        echo json_encode(array(
-            'success' => false,
-            'msg' => "Device not found (by name)."
-        ));
-        exit(1);
-    }
     $msg = null;
-    $initialStatus = $s20Table[$mac]['st'];
-    $finalStatus = getFinalStatus($initialStatus, $action, $msg);
-
-    if (!is_null($finalStatus)) {
-        $s20Table[$mac]['st'] = actionAndCheck($mac, $finalStatus, $s20Table);
-        $success = ($s20Table[$mac]['st'] == $finalStatus)? true : false;
-        $a = ($initialStatus)?"on":"off";
-        $b = ($finalStatus)?"on":"off";
-        $msg = "Switch {$a}->{$b}";
-    } else {
-        $msg = "Action not found";
+    if (!$mac) {
         $success = false;
+        $msg = "Device not found (by name).";
+    } else {
+        $initialStatus = $s20Table[$mac]['st'];
+        $finalStatus = getFinalStatus($initialStatus, $action, $msg);
+
+        if (!is_null($finalStatus)) {
+            $s20Table[$mac]['st'] = actionAndCheck($mac, $finalStatus, $s20Table);
+            $success = ($s20Table[$mac]['st'] == $finalStatus)? true : false;
+            $a = ($initialStatus)?"on":"off";
+            $b = ($finalStatus)?"on":"off";
+            $msg = "Switch {$a}->{$b}";
+        } else {
+            $msg = "Action not found";
+            $success = false;
+        }
     }
 
-    return json_encode(
-        array(
-            $mac => array(
-                'success' => $success,
-                'device' => $device,
-                'status' => $s20Table[$mac]['st'],
-                'msg' => $msg
-            )
-        )
+    return array(
+        'success' => $success,
+        'device' => $device,
+        'mac' => $mac,
+        'status' => $s20Table[$mac]['st'],
+        'msg' => $msg
     );
 }
 
