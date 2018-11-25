@@ -37,6 +37,13 @@ else{
 $action = $_REQUEST['action'];
 $device = $_REQUEST['device'];
 if(isset($action) && isset($device)){
+
+    $response = switchDevice($s20Table, $device, $action);
+
+    echo $response;
+}
+
+function switchDevice($s20Table, $device, $action) {
     $mac = getMacFromDeviceName($s20Table, $device);
     if (!$mac) {
         echo json_encode(array(
@@ -52,7 +59,6 @@ if(isset($action) && isset($device)){
     if (!is_null($finalStatus)) {
         $s20Table[$mac]['st'] = actionAndCheck($mac, $finalStatus, $s20Table);
         $success = ($s20Table[$mac]['st'] == $finalStatus)? true : false;
-        $success = true;
         $a = ($initialStatus)?"on":"off";
         $b = ($finalStatus)?"on":"off";
         $msg = "Switch {$a}->{$b}";
@@ -61,12 +67,16 @@ if(isset($action) && isset($device)){
         $success = false;
     }
 
-    echo json_encode(array(
-        'success' => $success,
-        'device' => $device,
-        'status' => $s20Table[$mac]['st'],
-        'msg' => $msg
-    ));
+    return json_encode(
+        array(
+            $mac => array(
+                'success' => $success,
+                'device' => $device,
+                'status' => $s20Table[$mac]['st'],
+                'msg' => $msg
+            )
+        )
+    );
 }
 
 function getMacFromDeviceName($s20Table, $deviceName) {
